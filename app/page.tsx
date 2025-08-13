@@ -96,6 +96,8 @@ export default function Page() {
 		prevLenRef.current = messages.length;
 	}, [messages, stickToBottom]);
 
+	const isLanding = messages.length === 0;
+
 	async function send() {
 		const text = input.trim();
 		if (!text) return;
@@ -189,8 +191,8 @@ export default function Page() {
 			</nav>
 
 			{/* Messages above input (scrollable) */}
-			<main ref={listRef} style={{ maxWidth: 920, margin: '0 auto', width: '100%', padding: `0 16px ${footerHeight}px`, overflowY: 'auto' }}>
-				<section style={{ textAlign: 'center', padding: isSmall ? '16px 12px 16px' : '24px 12px 24px' }}>
+			<main ref={listRef} style={{ maxWidth: 920, margin: '0 auto', width: '100%', padding: isLanding ? '0 16px 12px' : `0 16px ${footerHeight}px`, overflowY: isLanding ? 'hidden' : 'auto' }}>
+				<section style={{ textAlign: 'center', padding: isSmall ? '16px 12px 16px' : '24px 12px 24px', display: isLanding ? 'grid' : undefined, placeItems: isLanding ? 'center' : undefined, minHeight: isLanding ? 'calc(100svh - 140px)' : undefined }}>
 					{!isSmall && <div style={{ fontSize: 20, fontWeight: 100, marginBottom: 8, color: textColorMuted }}>AskAmp</div>}
 					<h1 style={{ margin: '0 auto', maxWidth: 560, fontSize: isSmall ? 36 : 50, lineHeight: 1.08, fontWeight: 300, ...shimmerStyle }}>Search across Confluence Docs</h1>
 				</section>
@@ -228,7 +230,7 @@ export default function Page() {
 					</div>
 				))}
 				{loading && <div style={{ color: textColorMuted, padding: '8px 0' }}>Thinking…</div>}
-				<div ref={bottomRef} style={{ height: footerHeight + 40 }} />
+				<div ref={bottomRef} style={{ height: isLanding ? 0 : footerHeight + 40 }} />
 			</main>
 
 			{/* Bottom-fixed input */}
