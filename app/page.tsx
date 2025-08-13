@@ -150,6 +150,10 @@ export default function Page() {
 		? '0 6px 12px rgba(0,0,0,0.55), inset 0 1px rgba(255,255,255,0.05)'
 		: '0 6px 12px rgba(0,0,0,0.12), inset 0 1px rgba(255,255,255,0.9)';
 
+	// Theme-aware styles for reference tiles (Sources)
+	const refTileBg = theme === 'dark' ? '#0f0f0f' : '#f6f7f9';
+	const refTileBorder = theme === 'dark' ? '#333' : '#e5e7eb';
+
 	// Shared thin Roboto text style for buttons/labels
 	const thinText: React.CSSProperties = { fontFamily: 'inherit', fontWeight: 300 };
 
@@ -207,7 +211,7 @@ export default function Page() {
 											: '';
 										return (
 											<a key={idx} href={ref.url} target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
-												<div style={{ border: '1px solid #333', borderRadius: 12, overflow: 'hidden', background: '#0f0f0f' }}>
+												<div style={{ border: `1px solid ${refTileBorder}`, borderRadius: 12, overflow: 'hidden', background: refTileBg }}>
 													{thumb && (
 														<div style={{ position: 'relative', width: '100%', paddingTop: '100%' }}>
 															<img src={thumb} alt={display} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
@@ -253,7 +257,7 @@ export default function Page() {
 			{kbOpen && (
 				<div style={{ position: 'fixed', inset: 0 as any, background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(6px)', opacity: kbAnim ? 1 : 0, transition: 'opacity 220ms ease' }} onClick={closeKbModal}>
 					<div onClick={(e) => e.stopPropagation()} style={{ width: isSmall ? '96vw' : '92vw', maxWidth: 1200, maxHeight: isSmall ? '90vh' : '82vh', margin: isSmall ? '5vh auto' : '9vh auto', background: modalBg, color: modalText, border: `1px solid ${panelBorderColor}`, borderRadius: 16, padding: isSmall ? 12 : 20, boxShadow: '0 30px 80px rgba(0,0,0,0.55)', display: 'flex', flexDirection: 'column', boxSizing: 'border-box', overflow: 'hidden', transform: kbAnim ? 'translateY(0px)' : 'translateY(10px)', transition: 'transform 220ms ease' }}>
-						<h3 style={{ marginTop: 0, fontWeight:100 }}>Knowledge Base</h3>
+						<h3 style={{ marginTop: 0, fontWeight:100 }}>Knowledge Base: Confluence Docs</h3>
 						<div style={{ display: 'grid', gridTemplateColumns: isSmall ? '1fr' : '1.1fr 0.9fr', gap: 18, flex: 1, overflowY: 'auto', overflowX: 'hidden', paddingBottom: 80 }}>
 							<div style={{ background: panelBg, border: `1px solid ${panelBorderColor}`, borderRadius: 14, padding: 14, height: '100%', display: 'flex', flexDirection: 'column', minWidth: 0, position: 'relative', overflow: 'visible' }}>
 								<h4 style={{ margin: '0 0 8px', fontWeight: 100, letterSpacing: 0.2 }}>Add / Edit</h4>
