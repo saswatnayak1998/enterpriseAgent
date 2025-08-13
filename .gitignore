@@ -1,0 +1,69 @@
+
+- Node / Next.js
+```
+node_modules/
+.next/
+.turbo/
+.vercel/
+dist/
+build/
+*.log
+```
+
+- OS / editor
+```
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+```
+
+- Env files
+```
+.env
+.env.*
+```
+
+- Python (retriever)
+```
+retriever/.venv/
+**/__pycache__/
+*.py[cod]
+```
+
+- Native/binary modules (often huge)
+```
+**/*.node
+**/*.wasm
+```
+
+- Cache
+```
+npm-cache/
+pnpm-store/
+.yarn/
+.yarn/cache/
+```
+
+Then remove anything already tracked:
+```bash
+git rm -r --cached node_modules .next .turbo .vercel dist build retriever/.venv
+git rm -r --cached "**/*.node" "**/*.wasm"
+git add -A
+git commit -m "chore: ignore deps/build/binaries to avoid large files"
+```
+
+If history already contains big files (e.g., next-swc.darwin-arm64.node), rewrite it before pushing:
+```bash
+# Install once
+brew install git-filter-repo || python3 -m pip install --user git-filter-repo
+
+git filter-repo \
+  --path node_modules --path .next --path .turbo --path dist --path build \
+  --path retriever/.venv \
+  --path-glob '*.node' --path-glob '*.wasm' \
+  --invert-paths
+
+git push -f origin main
+```
+
