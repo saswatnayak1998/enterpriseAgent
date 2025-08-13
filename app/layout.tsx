@@ -6,7 +6,12 @@ const roboto = Roboto({ subsets: ['latin'], weight: ['100','300','400','500','70
 
 export const metadata: Metadata = {
 	title: 'AmpLM',
-	description: 'FAISS + NVIDIA NIM RAG chatbot'
+	description: 'FAISS + NVIDIA NIM RAG chatbot',
+	icons: {
+		icon: '/icon.png',
+		shortcut: '/favicon.ico',
+		apple: '/icon.png'
+	}
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

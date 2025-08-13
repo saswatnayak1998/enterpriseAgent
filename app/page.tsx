@@ -192,7 +192,7 @@ export default function Page() {
 			<main ref={listRef} style={{ maxWidth: 920, margin: '0 auto', width: '100%', padding: `0 16px ${footerHeight}px`, overflowY: 'auto' }}>
 				<section style={{ textAlign: 'center', padding: '24px 12px 24px' }}>
 					<div style={{ fontSize: 20, fontWeight: 100, marginBottom: 8, color: textColorMuted }}>AskAmp</div>
-					<h1 style={{ margin: '0 auto', maxWidth: 560, fontSize: 50, lineHeight: 1.08, fontWeight: 300, ...shimmerStyle }}>Search across docs</h1>
+					<h1 style={{ margin: '0 auto', maxWidth: 560, fontSize: 50, lineHeight: 1.08, fontWeight: 300, ...shimmerStyle }}>Search across Confluence Docs</h1>
 				</section>
 
 				{messages.map((m, i) => (
