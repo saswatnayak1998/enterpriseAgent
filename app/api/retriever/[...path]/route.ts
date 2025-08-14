@@ -16,13 +16,15 @@ async function forward(req: NextRequest, path: string[], init?: RequestInit & { 
 	headers.delete('host');
 	headers.delete('x-forwarded-host');
 	headers.delete('x-forwarded-proto');
+	// Bypass ngrok browser warning
+	headers.set('ngrok-skip-browser-warning', '1');
 	const method = req.method.toUpperCase();
 	const hasBody = !(method === 'GET' || method === 'HEAD');
 	return fetch(url, {
 		method,
 		headers,
 		body: hasBody ? (req.body as any) : undefined,
-		redirect: 'manual',
+		redirect: 'follow',
 		cache: 'no-store',
 		duplex: hasBody ? 'half' : undefined,
 		...init
