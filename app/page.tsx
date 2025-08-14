@@ -187,10 +187,22 @@ export default function Page() {
 	return (
 		<div style={{ height: '100vh', display: 'grid', gridTemplateRows: 'auto 1fr auto', alignItems: 'start', overflow: 'hidden' }}>
 			{/* Header */}
-			<nav ref={headerRef} style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1100, backdropFilter: 'saturate(180%) blur(10px)', background: headerBg, borderBottom: `1px solid ${headerBorder}` }}>
-				<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 24px', maxWidth: 1120, margin: '0 auto', width: '100%' }}>
+			<nav ref={headerRef} style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1100, backdropFilter: 'saturate(180%) blur(10px)', background: headerBg, borderBottom: `1px solid ${headerBorder}`, boxSizing: 'border-box' }}>
+				<div
+					style={{
+						display: 'flex',
+						justifyContent: 'space-between',
+						alignItems: 'center',
+						padding: isSmall ? '10px 14px' : '12px 24px',
+						paddingLeft: `calc(${isSmall ? 14 : 24}px + env(safe-area-inset-left))`,
+						paddingRight: `calc(${isSmall ? 14 : 24}px + env(safe-area-inset-right))`,
+						maxWidth: 1120,
+						margin: '0 auto',
+						width: '100%'
+					}}
+				>
 					<div style={{ fontWeight: 100, letterSpacing: 0.2 }}>AskAmp</div>
-					<div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+					<div style={{ display: 'flex', gap: isSmall ? 8 : 16, alignItems: 'center', flexShrink: 0 }}>
 						{/* Single theme toggle switch */}
 						<button
 							role="switch"
@@ -202,7 +214,7 @@ export default function Page() {
 							<span style={{ position: 'absolute', top: 1.5, left: isDark ? 24 : 2, width: 24, height: 24, borderRadius: '50%', background: isDark ? '#eaeaea' : '#0b0b0b', transition: 'left 200ms ease' }} />
 						</button>
 						{/* Feedback link removed */}
-						<button onClick={openKbModal} style={{ padding: '10px 14px', borderRadius: 999, border: 'none', background: 'linear-gradient(90deg,#ffb36b,#ff97d0)', color: '#111', ...thinText }}>Docs</button>
+						<button onClick={openKbModal} style={{ padding: isSmall ? '8px 12px' : '10px 14px', borderRadius: 999, border: 'none', background: 'linear-gradient(90deg,#ffb36b,#ff97d0)', color: '#111', ...thinText, flexShrink: 0 }}>Docs</button>
 					</div>
 				</div>
 			</nav>
