@@ -1,5 +1,8 @@
 import { NextRequest } from 'next/server';
 
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
 function buildTargetUrl(req: NextRequest, path: string[]): string {
 	const base = process.env.RETRIEVER_URL;
 	if (!base) throw new Error('Missing RETRIEVER_URL');
@@ -18,6 +21,7 @@ async function forward(req: NextRequest, path: string[], init?: RequestInit) {
 		headers,
 		body: req.body as any,
 		redirect: 'manual',
+		cache: 'no-store',
 		...init
 	});
 }
