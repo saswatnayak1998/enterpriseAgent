@@ -300,7 +300,7 @@ export default function Page() {
 
 			{/* KB modal */}
 			{kbOpen && (
-				<div style={{ position: 'fixed', inset: 0 as any, background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(6px)', opacity: kbAnim ? 1 : 0, transition: 'opacity 220ms ease' }} onClick={closeKbModal}>
+				<div style={{ position: 'fixed', inset: 0 as any, background: 'rgba(0,0,0,0.45)', backdropFilter: 'blur(6px)', opacity: kbAnim ? 1 : 0, transition: 'opacity 220ms ease', zIndex: 2000 }} onClick={closeKbModal}>
 					<div onClick={(e) => e.stopPropagation()} style={{ width: isSmall ? '96vw' : '92vw', maxWidth: 1200, maxHeight: isSmall ? '90vh' : '82vh', margin: isSmall ? '5vh auto' : '9vh auto', background: modalBg, color: modalText, border: `1px solid ${panelBorderColor}`, borderRadius: 16, padding: isSmall ? 12 : 20, boxShadow: '0 30px 80px rgba(0,0,0,0.55)', display: 'flex', flexDirection: 'column', boxSizing: 'border-box', overflow: 'hidden', transform: kbAnim ? 'translateY(0px)' : 'translateY(10px)', transition: 'transform 220ms ease' }}>
 						<h3 style={{ marginTop: 0, fontWeight:100 }}>Knowledge Base: Confluence Docs</h3>
 						<div style={{ display: 'grid', gridTemplateColumns: isSmall ? '1fr' : '1.1fr 0.9fr', gap: 18, flex: 1, overflowY: 'auto', overflowX: 'hidden', paddingBottom: 80 }}>
@@ -354,7 +354,7 @@ export default function Page() {
 								</div>
 							</div>
 						</div>
-						<div style={{ marginTop: 14, position: 'sticky', bottom: 0, background: modalBg, borderTop: `1px solid ${panelBorderColor}`, paddingTop: 10, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
+						<div style={{ marginTop: 14, position: 'sticky', bottom: 0, background: modalBg, borderTop: `1px solid ${panelBorderColor}`, paddingTop: 10, paddingBottom: 'calc(8px + env(safe-area-inset-bottom))', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
 							<div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
 								<button onClick={saveTextToKb} disabled={kbBusy || !kbFilename || !kbText} style={{ padding: '10px 14px', borderRadius: 999, border: 'none', background: 'linear-gradient(90deg,#ffb36b,#ff97d0)', color: '#111', ...thinText }}>{kbBusy ? 'Saving…' : 'Save & Reindex'}</button>
 								<label htmlFor="kbUpload" style={{ padding: '10px 14px', borderRadius: 999, border: `1px solid ${panelBorderColor}`, cursor: 'pointer', background: 'transparent', color: modalText, ...thinText }}>Upload file</label>
