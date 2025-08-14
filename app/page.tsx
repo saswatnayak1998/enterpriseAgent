@@ -92,9 +92,12 @@ export default function Page() {
 	}, []);
 
 	const scrollToBottom = (behavior: ScrollBehavior = 'smooth') => {
+		if (bottomRef.current) {
+			bottomRef.current.scrollIntoView({ behavior, block: 'end' });
+			return;
+		}
 		const el = listRef.current;
-		if (!el) return;
-		el.scrollTo({ top: el.scrollHeight, behavior });
+		if (el) el.scrollTo({ top: el.scrollHeight, behavior });
 	};
 
 	useEffect(() => {
@@ -220,7 +223,7 @@ export default function Page() {
 			</nav>
 
 			{/* Messages above input (scrollable) */}
-			<main ref={listRef} style={{ maxWidth: 920, margin: '0 auto', width: '100%', padding: `${headerHeight + 12}px 16px ${footerHeight}px`, overflowY: 'auto', boxSizing: 'border-box' }}>
+			<main ref={listRef} style={{ maxWidth: 920, margin: '0 auto', width: '100%', padding: `${headerHeight + 12}px 16px ${footerHeight + 32}px`, overflowY: 'auto', boxSizing: 'border-box' }}>
 			<section style={{ textAlign: 'center', padding: '24px 12px 24px' }}>
 					<div style={{ fontSize: 20, fontWeight: 100, marginBottom: 8, color: textColorMuted }}>AskAmp</div>
 					<h1 style={{ margin: '0 auto', maxWidth: 560, fontSize: 50, lineHeight: 1.08, fontWeight: 300, ...shimmerStyle }}>Search across Confluence Docs</h1>
@@ -260,7 +263,7 @@ export default function Page() {
 					</div>
 				))}
 				{loading && <div style={{ color: textColorMuted, padding: '8px 0' }}>Thinking…</div>}
-				<div ref={bottomRef} style={{ height: footerHeight + 40 }} />
+				<div ref={bottomRef} style={{ height: footerHeight + 120 }} />
 			</main>
 
 			{/* Bottom-fixed input */}
