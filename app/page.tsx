@@ -201,23 +201,25 @@ export default function Page() {
 						paddingRight: `calc(${isSmall ? 14 : 24}px + env(safe-area-inset-right))`,
 						maxWidth: 1120,
 						margin: '0 auto',
-						width: '100%'
+						width: '100%',
+						boxSizing: 'border-box',
+						minWidth: 0
 					}}
 				>
-					<div style={{ fontWeight: 100, letterSpacing: 0.2 }}>AskAmp</div>
-					<div style={{ display: 'flex', gap: isSmall ? 8 : 16, alignItems: 'center', flexShrink: 0 }}>
+					<div style={{ fontWeight: 100, letterSpacing: 0.2, minWidth: 0 }}>AskAmp</div>
+					<div style={{ display: 'flex', gap: isSmall ? 8 : 16, alignItems: 'center', minWidth: 0 }}>
 						{/* Single theme toggle switch */}
 						<button
 							role="switch"
 							aria-checked={isDark}
 							onClick={() => setTheme(isDark ? 'light' : 'dark')}
-							style={{ width: 50, height: 28, borderRadius: 999, border: `1px solid ${borderColor}`, background: isDark ? '#111' : '#f3f3f3', position: 'relative', padding: 0, cursor: 'pointer' }}
+							style={{ width: 50, height: 28, borderRadius: 999, border: `1px solid ${borderColor}`, background: isDark ? '#111' : '#f3f3f3', position: 'relative', padding: 0, cursor: 'pointer', flexShrink: 0 }}
 							title="Toggle theme"
 						>
 							<span style={{ position: 'absolute', top: 1.5, left: isDark ? 24 : 2, width: 24, height: 24, borderRadius: '50%', background: isDark ? '#eaeaea' : '#0b0b0b', transition: 'left 200ms ease' }} />
 						</button>
 						{/* Feedback link removed */}
-						<button onClick={openKbModal} style={{ padding: isSmall ? '8px 12px' : '10px 14px', borderRadius: 999, border: 'none', background: 'linear-gradient(90deg,#ffb36b,#ff97d0)', color: '#111', ...thinText, flexShrink: 0 }}>Docs</button>
+						<button onClick={openKbModal} style={{ padding: isSmall ? '7px 10px' : '10px 14px', fontSize: isSmall ? 12 : 14, borderRadius: 999, border: 'none', background: 'linear-gradient(90deg,#ffb36b,#ff97d0)', color: '#111', ...thinText, maxWidth: isSmall ? '44vw' : undefined, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', flexShrink: 1 }}>Docs</button>
 					</div>
 				</div>
 			</nav>
