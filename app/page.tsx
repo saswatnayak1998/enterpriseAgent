@@ -242,10 +242,8 @@ export default function Page() {
 								<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 12 }}>
 									{m.references.map((ref, idx) => {
 										const display = ref.label.replace(/^#\d+\s+/, '');
-										const thumbBase = process.env.NEXT_PUBLIC_RETRIEVER_URL || '';
-										const thumb = thumbBase
-											? `${thumbBase}/thumb?source=${encodeURIComponent(display)}&text=${encodeURIComponent((m.content || '').slice(0, 240))}`
-											: '';
+										const thumbBase = '/api/retriever';
+										const thumb = `${thumbBase}/thumb?source=${encodeURIComponent(display)}&text=${encodeURIComponent((m.content || '').slice(0, 240))}`;
 										return (
 											<a key={idx} href={ref.url} target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
 												<div style={{ border: `1px solid ${refTileBorder}`, borderRadius: 12, overflow: 'hidden', background: refTileBg }}>
@@ -372,8 +370,7 @@ export default function Page() {
 
 	async function refreshKb() {
 		try {
-			const base = process.env.NEXT_PUBLIC_RETRIEVER_URL || process.env.RETRIEVER_URL || 'http://127.0.0.1:8000';
-			const res = await fetch(`${base}/list`);
+			const res = await fetch(`/api/retriever/list`);
 			const data = await res.json();
 			setKbList((data?.items as any[]) || []);
 		} catch {}
@@ -382,13 +379,12 @@ export default function Page() {
 	async function saveTextToKb() {
 		if (!kbFilename || !kbText) return;
 		try {
-			const base = process.env.NEXT_PUBLIC_RETRIEVER_URL || process.env.RETRIEVER_URL || 'http://127.0.0.1:8000';
 			const form = new FormData();
 			form.append('filename', kbFilename);
 			form.append('text', kbText);
 			form.append('reindex', 'true');
 			setKbBusy(true);
-			await fetch(`${base}/add_text`, { method: 'POST', body: form });
+			await fetch(`/api/retriever/add_text`, { method: 'POST', body: form });
 			setKbBusy(false);
 			setKbText('');
 			await refreshKb();
@@ -397,16 +393,14 @@ export default function Page() {
 
 	async function deleteKb(source: string) {
 		try {
-			const base = process.env.NEXT_PUBLIC_RETRIEVER_URL || process.env.RETRIEVER_URL || 'http://127.0.0.1:8000';
-			await fetch(`${base}/delete?source=${encodeURIComponent(source)}&reindex=true`, { method: 'DELETE' });
+			await fetch(`/api/retriever/delete?source=${encodeURIComponent(source)}&reindex=true`, { method: 'DELETE' });
 			await refreshKb();
 		} catch {}
 	}
 
 	async function openKb(source: string) {
 		try {
-			const base = process.env.NEXT_PUBLIC_RETRIEVER_URL || process.env.RETRIEVER_URL || 'http://127.0.0.1:8000';
-			const res = await fetch(`${base}/raw?source=${encodeURIComponent(source)}`);
+			const res = await fetch(`/api/retriever/raw?source=${encodeURIComponent(source)}`);
 			const txt = await res.text();
 			setKbFilename(source);
 			setKbText(txt);
@@ -417,11 +411,10 @@ export default function Page() {
 		const file = e.target.files?.[0];
 		if (!file) return;
 		try {
-			const base = process.env.NEXT_PUBLIC_RETRIEVER_URL || process.env.RETRIEVER_URL || 'http://127.0.0.1:8000';
 			const form = new FormData();
 			form.append('file', file);
 			form.append('reindex', 'true');
-			await fetch(`${base}/add_file`, { method: 'POST', body: form });
+			await fetch(`/api/retriever/add_file`, { method: 'POST', body: form });
 			(await refreshKb());
 		} catch {}
 	}
