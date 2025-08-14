@@ -10,18 +10,21 @@ function buildTargetUrl(req: NextRequest, path: string[]): string {
 	return `${base}/${path.join('/')}${qs}`;
 }
 
-async function forward(req: NextRequest, path: string[], init?: RequestInit) {
+async function forward(req: NextRequest, path: string[], init?: RequestInit & { duplex?: 'half' }) {
 	const url = buildTargetUrl(req, path);
 	const headers = new Headers(req.headers);
 	headers.delete('host');
 	headers.delete('x-forwarded-host');
 	headers.delete('x-forwarded-proto');
+	const method = req.method.toUpperCase();
+	const hasBody = !(method === 'GET' || method === 'HEAD');
 	return fetch(url, {
-		method: req.method,
+		method,
 		headers,
-		body: req.body as any,
+		body: hasBody ? (req.body as any) : undefined,
 		redirect: 'manual',
 		cache: 'no-store',
+		duplex: hasBody ? 'half' : undefined,
 		...init
 	});
 }
