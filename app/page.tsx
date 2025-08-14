@@ -225,7 +225,7 @@ export default function Page() {
 			</nav>
 
 			{/* Messages above input (scrollable) */}
-			<main ref={listRef} style={{ maxWidth: 920, margin: '0 auto', width: '100%', padding: `${headerHeight + 12}px 16px ${footerHeight + 32}px`, overflowY: 'auto', boxSizing: 'border-box' }}>
+			<main ref={listRef} style={{ maxWidth: 920, margin: '0 auto', width: '100%', padding: `${headerHeight + 12}px 16px ${footerHeight + 32}px`, overflowY: 'auto', boxSizing: 'border-box', WebkitOverflowScrolling: 'touch', touchAction: 'pan-y', minHeight: 0 }}>
 			<section style={{ textAlign: 'center', padding: '24px 12px 24px' }}>
 					<div style={{ fontSize: 20, fontWeight: 100, marginBottom: 8, color: textColorMuted }}>AskAmp</div>
 					<h1 style={{ margin: '0 auto', maxWidth: 560, fontSize: 50, lineHeight: 1.08, fontWeight: 300, ...shimmerStyle }}>Search across Confluence Docs</h1>
@@ -239,21 +239,12 @@ export default function Page() {
 						{m.role === 'assistant' && m.references && m.references.length > 0 && (
 							<div style={{ marginTop: 12 }}>
 								<div style={{ fontSize: 13, opacity: 0.8, marginBottom: 8, fontWeight: 300 }}>Sources</div>
-								<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 12 }}>
+								<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, auto))', gap: 8 }}>
 									{m.references.map((ref, idx) => {
 										const display = ref.label.replace(/^#\d+\s+/, '');
-										const thumbBase = '/api/retriever';
-										const thumb = `${thumbBase}/thumb?source=${encodeURIComponent(display)}&text=${encodeURIComponent((m.content || '').slice(0, 240))}`;
 										return (
 											<a key={idx} href={ref.url} target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
-												<div style={{ border: `1px solid ${refTileBorder}`, borderRadius: 12, overflow: 'hidden', background: refTileBg }}>
-													{thumb && (
-														<div style={{ position: 'relative', width: '100%', paddingTop: '100%' }}>
-															<img src={thumb} alt={display} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-														</div>
-													)}
-													<div style={{ padding: 8, fontSize: 13, fontWeight: 300, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{display}</div>
-												</div>
+												<div style={{ border: `1px solid ${refTileBorder}`, borderRadius: 10, background: refTileBg, padding: '8px 10px', fontSize: 12, fontWeight: 300, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{display}</div>
 											</a>
 										);
 									})}
