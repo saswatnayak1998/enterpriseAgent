@@ -13,7 +13,9 @@ type Reference = { label: string; url: string };
 const SYSTEM_PROMPT =
 	"You are an LLM developed by Amperesand (by Saswat). You will be fed data from documents. " +
 	"Do not copy-paste content from the docs; instead, make sense of it and answer the user's query clearly and concisely. " +
-	"If the provided context is insufficient, say you don't know. When available, include brief citations.";
+	"If the provided context is insufficient, say you don't know. When available, include brief citations." +
+	"If there are conflicting information in the document, state it along with sources." +
+	"If the query is not related with any chunks, then answer without the chunk context";
 
 async function fetchContext(query: string, topK: number): Promise<RetrieverResult[]> {
 	const base = process.env.RETRIEVER_URL;

@@ -24,6 +24,8 @@ export default function Page() {
 	const bottomRef = useRef<HTMLDivElement>(null);
 	const footerRef = useRef<HTMLDivElement>(null);
 	const [footerHeight, setFooterHeight] = useState(160);
+	const headerRef = useRef<HTMLDivElement>(null);
+	const [headerHeight, setHeaderHeight] = useState(0);
 
 	useEffect(() => {
 		const onResize = () => setIsSmall(window.innerWidth < 820);
@@ -40,6 +42,17 @@ export default function Page() {
 			setFooterHeight(h + 24);
 		});
 		if (footerRef.current) ro.observe(footerRef.current);
+		return () => ro.disconnect();
+	}, []);
+
+	useEffect(() => {
+		const RO = (window as any).ResizeObserver;
+		if (!RO) return;
+		const ro = new RO((entries: any) => {
+			const h = entries?.[0]?.target?.getBoundingClientRect?.().height || 64;
+			setHeaderHeight(h);
+		});
+		if (headerRef.current) ro.observe(headerRef.current);
 		return () => ro.disconnect();
 	}, []);
 
@@ -95,8 +108,6 @@ export default function Page() {
 		}
 		prevLenRef.current = messages.length;
 	}, [messages, stickToBottom]);
-
-	const isLanding = messages.length === 0;
 
 	async function send() {
 		const text = input.trim();
@@ -156,6 +167,10 @@ export default function Page() {
 	const refTileBg = theme === 'dark' ? '#0f0f0f' : '#f6f7f9';
 	const refTileBorder = theme === 'dark' ? '#333' : '#e5e7eb';
 
+	// Header (top bar)
+	const headerBg = theme === 'dark' ? 'rgba(10,10,10,0.75)' : 'rgba(255,255,255,0.9)';
+	const headerBorder = theme === 'dark' ? '#1b1b1b' : '#ececec';
+
 	// Shared thin Roboto text style for buttons/labels
 	const thinText: React.CSSProperties = { fontFamily: 'inherit', fontWeight: 300 };
 
@@ -170,31 +185,34 @@ export default function Page() {
 	};
 
 	return (
-		<div style={{ minHeight: '100vh', display: 'grid', gridTemplateRows: 'auto 1fr auto', alignItems: 'start' }}>
+		<div style={{ height: '100vh', display: 'grid', gridTemplateRows: 'auto 1fr auto', alignItems: 'start', overflow: 'hidden' }}>
 			{/* Header */}
-			<nav style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: isSmall ? '12px 14px' : '16px 24px', maxWidth: 1120, margin: '0 auto', width: '100%' }}>
-				<div style={{ fontWeight: 100, letterSpacing: 0.2, fontSize: isSmall ? 16 : 18 }}>AskAmp</div>
-				<div style={{ display: 'flex', gap: isSmall ? 10 : 16, alignItems: 'center' }}>
-					{/* Single theme toggle switch */}
-					<button
-						role="switch"
-						aria-checked={isDark}
-						onClick={() => setTheme(isDark ? 'light' : 'dark')}
-						style={{ width: isSmall ? 44 : 50, height: isSmall ? 24 : 28, borderRadius: 999, border: `1px solid ${borderColor}`, background: isDark ? '#111' : '#f3f3f3', position: 'relative', padding: 0, cursor: 'pointer' }}
-						title="Toggle theme"
-					>
-						<span style={{ position: 'absolute', top: isSmall ? 1 : 1.5, left: isDark ? (isSmall ? 22 : 24) : 2, width: isSmall ? 22 : 24, height: isSmall ? 22 : 24, borderRadius: '50%', background: isDark ? '#eaeaea' : '#0b0b0b', transition: 'left 200ms ease' }} />
-					</button>
-					{/* Feedback link removed */}
-					<button onClick={openKbModal} style={{ padding: isSmall ? '8px 12px' : '10px 14px', borderRadius: 999, border: 'none', background: 'linear-gradient(90deg,#ffb36b,#ff97d0)', color: '#111', ...thinText }}>Docs</button>
+			<nav ref={headerRef} style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 1100, backdropFilter: 'saturate(180%) blur(10px)', background: headerBg, borderBottom: `1px solid ${headerBorder}` }}>
+				<div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 24px', maxWidth: 1120, margin: '0 auto', width: '100%' }}>
+					<div style={{ fontWeight: 100, letterSpacing: 0.2 }}>AskAmp</div>
+					<div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
+						{/* Single theme toggle switch */}
+						<button
+							role="switch"
+							aria-checked={isDark}
+							onClick={() => setTheme(isDark ? 'light' : 'dark')}
+							style={{ width: 50, height: 28, borderRadius: 999, border: `1px solid ${borderColor}`, background: isDark ? '#111' : '#f3f3f3', position: 'relative', padding: 0, cursor: 'pointer' }}
+							title="Toggle theme"
+						>
+							<span style={{ position: 'absolute', top: 1.5, left: isDark ? 24 : 2, width: 24, height: 24, borderRadius: '50%', background: isDark ? '#eaeaea' : '#0b0b0b', transition: 'left 200ms ease' }} />
+						</button>
+						{/* Feedback link removed */}
+						<button onClick={openKbModal} style={{ padding: '10px 14px', borderRadius: 999, border: 'none', background: 'linear-gradient(90deg,#ffb36b,#ff97d0)', color: '#111', ...thinText }}>Docs</button>
+					</div>
 				</div>
 			</nav>
 
 			{/* Messages above input (scrollable) */}
-			<main ref={listRef} style={{ maxWidth: 920, margin: '0 auto', width: '100%', padding: isLanding ? '0 16px 12px' : `0 16px ${footerHeight}px`, overflowY: isLanding ? 'hidden' : 'auto' }}>
-				<section style={{ textAlign: 'center', padding: isSmall ? '16px 12px 16px' : '24px 12px 24px', display: isLanding ? 'grid' : undefined, placeItems: isLanding ? 'center' : undefined, minHeight: isLanding ? 'calc(100svh - 140px)' : undefined }}>
-					{!isSmall && <div style={{ fontSize: 20, fontWeight: 100, marginBottom: 8, color: textColorMuted }}>AskAmp</div>}
-					<h1 style={{ margin: '0 auto', maxWidth: 560, fontSize: isSmall ? 36 : 50, lineHeight: 1.08, fontWeight: 300, ...shimmerStyle }}>Search across Confluence Docs</h1>
+			<main ref={listRef} style={{ maxWidth: 920, margin: '0 auto', width: '100%', padding: `${headerHeight + 12}px 16px ${footerHeight}px`, overflowY: 'auto', boxSizing: 'border-box' }}>
+			<section style={{ textAlign: 'center', padding: '24px 12px 24px' }}>
+					<div style={{ fontSize: 20, fontWeight: 100, marginBottom: 8, color: textColorMuted }}>AskAmp</div>
+					<h1 style={{ margin: '0 auto', maxWidth: 560, fontSize: 50, lineHeight: 1.08, fontWeight: 300, ...shimmerStyle }}>Search across Confluence Docs</h1>
+
 				</section>
 
 				{messages.map((m, i) => (
@@ -204,7 +222,7 @@ export default function Page() {
 						{m.role === 'assistant' && m.references && m.references.length > 0 && (
 							<div style={{ marginTop: 12 }}>
 								<div style={{ fontSize: 13, opacity: 0.8, marginBottom: 8, fontWeight: 300 }}>Sources</div>
-								<div style={{ display: 'grid', gridTemplateColumns: isSmall ? 'repeat(2, minmax(0, 1fr))' : 'repeat(auto-fill, minmax(160px, 1fr))', gap: 12 }}>
+								<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 12 }}>
 									{m.references.map((ref, idx) => {
 										const display = ref.label.replace(/^#\d+\s+/, '');
 										const thumbBase = process.env.NEXT_PUBLIC_RETRIEVER_URL || '';
@@ -214,39 +232,49 @@ export default function Page() {
 										return (
 											<a key={idx} href={ref.url} target="_blank" rel="noreferrer" style={{ textDecoration: 'none', color: 'inherit' }}>
 												<div style={{ border: `1px solid ${refTileBorder}`, borderRadius: 12, overflow: 'hidden', background: refTileBg }}>
-												{thumb && (
-													<div style={{ position: 'relative', width: '100%', paddingTop: '100%' }}>
-														<img src={thumb} alt={display} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
-													</div>
-												)}
-												<div style={{ padding: 8, fontSize: 13, fontWeight: 300, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{display}</div>
-											</div>
-										</a>
-									);
-								})}
+													{thumb && (
+														<div style={{ position: 'relative', width: '100%', paddingTop: '100%' }}>
+															<img src={thumb} alt={display} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+														</div>
+													)}
+													<div style={{ padding: 8, fontSize: 13, fontWeight: 300, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{display}</div>
+												</div>
+											</a>
+										);
+									})}
 								</div>
 							</div>
 						)}
 					</div>
 				))}
 				{loading && <div style={{ color: textColorMuted, padding: '8px 0' }}>Thinking…</div>}
-				<div ref={bottomRef} style={{ height: isLanding ? 0 : footerHeight + 40 }} />
+				<div ref={bottomRef} style={{ height: footerHeight + 40 }} />
 			</main>
 
 			{/* Bottom-fixed input */}
-			<footer ref={footerRef} style={{ position: 'fixed', left: 0, right: 0, bottom: 0, padding: isSmall ? 10 : 12 }}>
+			<footer
+				ref={footerRef}
+				style={{
+					position: 'fixed',
+					left: 0,
+					right: 0,
+					bottom: 0,
+					zIndex: 1000,
+					padding: '12px 12px calc(12px + env(safe-area-inset-bottom)) 12px'
+				}}
+			>
 				<div style={{ display: 'grid', placeItems: 'center' }}>
-					<div style={{ width: isSmall ? '94vw' : 'min(920px, 92vw)', background: surface, borderRadius: 20, boxShadow: shadow, border: `1px solid ${borderColor}` }}>
-						<div style={{ position: 'relative', padding: isSmall ? 8 : 10 }}>
+					<div style={{ width: 'min(920px, 92vw)', background: surface, borderRadius: 20, boxShadow: shadow, border: `1px solid ${borderColor}` }}>
+						<div style={{ position: 'relative', padding: 10 }}>
 							<input
 								value={input}
 								onChange={(e) => setInput(e.target.value)}
 								onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (!loading) send(); } }}
 								placeholder="What do you want to search for?"
-								style={{ width: '100%', height: isSmall ? 52 : 48, padding: `0 ${isSmall ? 92 : 104}px 0 16px`, border: 'none', outline: 'none', background: 'transparent', color: 'inherit', fontSize: isSmall ? 17 : 18, borderRadius: 20, ...thinText }}
+								style={{ width: '100%', height: 48, padding: '0 104px 0 16px', border: 'none', outline: 'none', background: 'transparent', color: 'inherit', fontSize: 18, borderRadius: 20, ...thinText }}
 							/>
-							<button aria-label="Send" onClick={send} disabled={loading} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', width: isSmall ? 40 : 42, height: isSmall ? 40 : 42, background: '#ffffff', color: '#111', borderRadius: '50%', display: 'grid', placeItems: 'center', border: '1px solid rgba(0,0,0,0.12)', boxShadow: '0 4px 12px rgba(0,0,0,0.25)', transition: 'transform 120ms ease, box-shadow 120ms ease' }}>
-								<svg width={isSmall ? 16 : 18} height={isSmall ? 16 : 18} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<button aria-label="Send" onClick={send} disabled={loading} style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', width: 42, height: 42, background: '#ffffff', color: '#111', borderRadius: '50%', display: 'grid', placeItems: 'center', border: '1px solid rgba(0,0,0,0.12)', boxShadow: '0 4px 12px rgba(0,0,0,0.25)', transition: 'transform 120ms ease, box-shadow 120ms ease' }}>
+								<svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 									<path d="M12 5l5 5h-3v8H10v-8H7l5-5z" fill="currentColor"/>
 								</svg>
 							</button>
